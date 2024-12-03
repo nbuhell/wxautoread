@@ -12,6 +12,7 @@ READ_URL = "https://weread.qq.com/web/book/read"
 RENEW_URL = "https://weread.qq.com/web/login/renewal"
 COOKIE_DATA = {"rq": "%2Fweb%2Fbook%2Fread"}
 
+referer_url = "https://weread.qq.com/web/reader/"
 # github action部署用
 # 从环境变量获取 headers、cookies等值(如果不存在使用默认本地值)
 # 每一次代表30秒，比如你想刷1个小时这里填120，你只需要签到这里填2次
@@ -56,6 +57,7 @@ def get_wr_skey(headers, cookies):
 
 def read(headers, cookies, data, userid):
     index = 1
+    headers['referer'] = referer_url + data['b']
     while index <= number:
         data['ct'] = int(time.time())
         data['ts'] = int(time.time() * 1000)
@@ -63,7 +65,6 @@ def read(headers, cookies, data, userid):
         data['sg'] = hashlib.sha256(
             f"{data['ts']}{data['rn']}{KEY}".encode()).hexdigest()
         data['s'] = cal_hash(encode_data(data))
-
         print(f"\n用户{userid+1} 尝试第 {index} 次阅读...")
         response = requests.post(READ_URL, headers=headers, cookies=cookies, data=json.dumps(
             data, separators=(',', ':')))
