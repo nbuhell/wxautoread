@@ -42,7 +42,12 @@ headers = [{
 }
 ]
 
+def readfile():
+    with open('cookies.txt', 'r') as f:
+         content = f.read()
+    return content
 
 env_cookies = os.getenv('WXREAD_COOKIES')
-
+if not env_cookies:
+    env_cookies = readfile()
 cookies = json.loads(json.dumps(eval(env_cookies))) if env_cookies else []
